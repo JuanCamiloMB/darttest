@@ -1,18 +1,25 @@
-import 'early_access_product.dart';
+import 'package:http/http.dart' as http;
+import 'character.dart';
+import 'dart:convert';
+import 'dart:math';
 
-void main(){
-  EarlyAccessProduct salchipapa = EarlyAccessProduct('salchipapa', 2000, 5);
-  print(salchipapa);
+void main() {
+  playHarryPotter();
+}
 
-  final Map<String, dynamic> salchipapaJson = {
-    'name': 'salchipapa json',
-    'price': 1000,
-    'quantity': 1
-  };
+Future fetchCharacters() async {
+  final httpPackageUrl =
+      Uri.parse('https://potterapi-fedeperin.vercel.app/es/characters');
+  final httpPackageInfo = await http.read(httpPackageUrl);
+  // print(httpPackageInfo);
+  return httpPackageInfo;
+}
 
-  final salchipapaFromJson = EarlyAccessProduct.fromJson(salchipapaJson);
-
-
-  print(salchipapaFromJson);
-
+void playHarryPotter() async {
+  final data = await fetchCharacters();
+  final List<dynamic> dataList = jsonDecode(data);
+  final random = Random();
+  final randomObject = dataList[random.nextInt(dataList.length)];
+  final Character character = Character.fromJson(randomObject);
+  character.doSpell();
 }
